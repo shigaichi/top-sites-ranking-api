@@ -40,10 +40,10 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 	}
 
 	if savedListId {
-		log.Infof("list id %s (date: %s) alread exists in writing standard tranco list", metadata.ListId, date.String())
+		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id alread exists in writing standard tranco list")
 		return nil
 	} else {
-		log.Infof("list id %s (date: %s) does not exist and write standard tranco list", metadata.ListId, date.String())
+		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id does not exist and write standard tranco list")
 	}
 
 	parse, err := url.Parse(metadata.Download)
