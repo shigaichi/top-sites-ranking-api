@@ -3,6 +3,7 @@ module github.com/shigaichi/top-sites-ranking-api
 go 1.21.2
 
 require (
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/google/go-cmp v0.6.0
 	github.com/highlight/highlight/sdk/highlight-go v0.9.12
 	github.com/jackc/pgx/v5 v5.4.3
