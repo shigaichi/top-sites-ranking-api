@@ -52,12 +52,22 @@ jobs:
             echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build and push Docker image
+      - name: Build and push writer image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile-standard-writer
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api:latest
-            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api:${{ steps.check-tags.outputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-writer:latest
+            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-writer:${{ steps.check-tags.outputs.tag }}
+
+      - name: Build and push server image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile-api-server
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-server:latest
+            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-server:${{ steps.check-tags.outputs.tag }}
