@@ -1,27 +1,42 @@
 package http
 
 import (
-	"net/http"
+	"github.com/go-chi/cors"
+	"github.com/shigaichi/top-sites-ranking-api/internal/adapter/http/handler"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func InitRoute() chi.Router {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Heartbeat("/status"))
+type Route interface {
+	InitRoute() chi.Route
+}
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello world"))
+type RouteImpl struct {
+	h handler.GetRanking
+}
+
+func NewRouteImpl(h handler.GetRanking) *RouteImpl {
+	return &RouteImpl{h: h}
+}
+
+func (i RouteImpl) InitRoute() chi.Router {
+	router := chi.NewRouter()
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.Heartbeat("/status"))
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowCredentials: false,
+		MaxAge:           600,
+	}))
+
+	router.Route("/api/v1/rankings", func(r chi.Router) {
+		r.Get("/daily", i.h.GetDailyRanking)
+		r.Get("/monthly", i.h.GetMonthlyRanking)
 	})
 
-	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(501)
-		w.Write([]byte("hello world from test"))
-	})
-
-	return r
+	return router
 }

@@ -15,6 +15,7 @@ require (
 require (
 	github.com/99designs/gqlgen v0.17.24 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
+	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/glog v1.0.0 // indirect

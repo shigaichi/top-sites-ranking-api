@@ -2,10 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/shigaichi/top-sites-ranking-api/internal/adapter/http/handler"
+	"github.com/shigaichi/top-sites-ranking-api/internal/infra"
+	"github.com/shigaichi/top-sites-ranking-api/internal/usecase"
 
 	route "github.com/shigaichi/top-sites-ranking-api/internal/adapter/http"
 	"github.com/shigaichi/top-sites-ranking-api/internal/util"
@@ -18,7 +23,17 @@ func main() {
 		defer h()
 	}
 
-	r := route.InitRoute()
+	db, err := infra.NewDb()
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("failed to create db connection when start up api server")
+		return
+	}
+
+	repo := infra.NewTrancoDailyRankRepositoryImpl(db)
+	u := usecase.NewRankHistoryInteractor(repo)
+	h := handler.NewGetRankingImpl(u)
+	ri := route.NewRouteImpl(h)
+	r := ri.InitRoute()
 
 	srv := http.Server{
 		Addr:    ":3333",
@@ -27,7 +42,11 @@ func main() {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("Failed to start server")
+			if errors.Is(err, http.ErrServerClosed) {
+				log.WithFields(log.Fields{"error": err}).Info("shutting down server")
+			} else {
+				log.WithFields(log.Fields{"error": err}).Error("Failed to start server")
+			}
 		}
 	}()
 
