@@ -21,7 +21,7 @@ func StandardWriter(date time.Time) error {
 	rankings := infra.NewTrancoRankingsRepositoryImpl(db)
 	transaction := infra.NewTransaction(db)
 
-	u := usecase.NewStandardWriteInteractor(api, csv, lists, domain, rankings, transaction)
+	u := usecase.NewStandardWriteInteractor(api, lists, csv, transaction, domain, rankings)
 	err = u.Write(context.Background(), date)
 	if err != nil {
 		return fmt.Errorf("failed to write csv. error: %w", err)

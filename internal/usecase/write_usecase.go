@@ -17,15 +17,15 @@ type WriteUseCase interface {
 
 type StandardWriteInteractor struct {
 	api         repository.TrancoApiRepository
-	csv         repository.TrancoCsvRepository
 	list        repository.TrancoListsRepository
+	csv         repository.TrancoCsvRepository
+	transaction repository.Transaction
 	domain      repository.TrancoDomainsRepository
 	ranking     repository.TrancoRankingsRepository
-	transaction repository.Transaction
 }
 
-func NewStandardWriteInteractor(api repository.TrancoApiRepository, csv repository.TrancoCsvRepository, list repository.TrancoListsRepository, domain repository.TrancoDomainsRepository, ranking repository.TrancoRankingsRepository, transaction repository.Transaction) *StandardWriteInteractor {
-	return &StandardWriteInteractor{api: api, csv: csv, list: list, domain: domain, ranking: ranking, transaction: transaction}
+func NewStandardWriteInteractor(api repository.TrancoApiRepository, list repository.TrancoListsRepository, csv repository.TrancoCsvRepository, transaction repository.Transaction, domain repository.TrancoDomainsRepository, ranking repository.TrancoRankingsRepository) *StandardWriteInteractor {
+	return &StandardWriteInteractor{api: api, list: list, csv: csv, transaction: transaction, domain: domain, ranking: ranking}
 }
 
 func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) error {
@@ -59,7 +59,7 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 
 		err = i.list.Save(ctx, model.TrancoList{Id: metadata.ListId, CreatedOn: metadata.CreatedOn})
 		if err != nil {
-			return nil, fmt.Errorf("failed to save list id is already exist or not in writing standard tranco list error: %w", err)
+			return nil, fmt.Errorf("failed to save list id because it is already exist orr error in writing standard tranco list. error: %w", err)
 		}
 
 		for _, ranking := range rankings {
