@@ -12,9 +12,8 @@ CREATE TABLE tranco_domains
 
 CREATE TABLE tranco_rankings
 (
-    id        SERIAL PRIMARY KEY,
-    domain_id BIGINT NOT NULL,
-    list_id   TEXT   NOT NULL,
-    ranking   INT    NOT NULL,
-    UNIQUE (domain_id, list_id)
+    domain_id BIGINT,
+    list_id   TEXT,
+    ranking   INT NOT NULL,
+    PRIMARY KEY (domain_id, list_id)
 );
