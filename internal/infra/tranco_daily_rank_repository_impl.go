@@ -36,7 +36,7 @@ WHERE td.domain = $1
   ORDER BY Date DESC
 `
 
-	args := []interface{}{domain, start, end}
+	args := []interface{}{domain, start, end.Add(time.Hour * 24)}
 
 	if err := dao.SelectContext(ctx, &ranks, query, args...); err != nil {
 		return nil, fmt.Errorf("failed to fetch daily ranks: %w", err)
