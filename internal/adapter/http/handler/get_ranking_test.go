@@ -44,22 +44,44 @@ func TestGetRankingImpl_GetDailyRanking(t *testing.T) {
 		expectedStatus int
 		expectedDomain string
 		expectedRanks  int
+		hasCacheHeader bool
 	}{
 		{
 			name: "valid request",
 			mockUsecase: UsecaseMock{
 				Domain: "example.com",
 				Start:  time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
-				End:    time.Date(2023, 1, 31, 0, 0, 0, 0, time.UTC),
+				End:    time.Date(2023, 1, 3, 0, 0, 0, 0, time.UTC),
 				Result: []model.DailyRank{
-					{Rank: 1, Date: time.Date(2023, 1, 15, 0, 0, 0, 0, time.UTC)},
+					{Rank: 1, Date: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)},
+					{Rank: 10, Date: time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)},
+					{Rank: 20, Date: time.Date(2023, 1, 3, 0, 0, 0, 0, time.UTC)},
 				},
 				Err: nil,
 			},
-			requestURL:     "/api/v1/rankings/daily?domain=example.com&start_date=2023-01-01&end_date=2023-01-31",
+			requestURL:     "/api/v1/rankings/daily?domain=example.com&start_date=2023-01-01&end_date=2023-01-03",
 			expectedStatus: http.StatusOK,
 			expectedDomain: "example.com",
-			expectedRanks:  1,
+			expectedRanks:  3,
+			hasCacheHeader: true,
+		},
+		{
+			name: "valid request. But does not have all ranks",
+			mockUsecase: UsecaseMock{
+				Domain: "example.com",
+				Start:  time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
+				End:    time.Date(2023, 1, 3, 0, 0, 0, 0, time.UTC),
+				Result: []model.DailyRank{
+					{Rank: 1, Date: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)},
+					{Rank: 10, Date: time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)},
+				},
+				Err: nil,
+			},
+			requestURL:     "/api/v1/rankings/daily?domain=example.com&start_date=2023-01-01&end_date=2023-01-03",
+			expectedStatus: http.StatusOK,
+			expectedDomain: "example.com",
+			expectedRanks:  2,
+			hasCacheHeader: false,
 		},
 		{
 			name:           "empty start date request",
@@ -159,6 +181,13 @@ func TestGetRankingImpl_GetDailyRanking(t *testing.T) {
 					t.Errorf("Expected %d ranks, got %v", tt.expectedRanks, ranks)
 				}
 			}
+
+			c := rr.Header().Get("Cache-Control")
+			if tt.hasCacheHeader && (len(c) == 0) {
+				t.Errorf("header has been expected.")
+			} else if !tt.hasCacheHeader && (len(c) > 0) {
+				t.Errorf("header has not been expected. but got %s", c)
+			}
 		})
 	}
 }
@@ -170,20 +199,40 @@ func TestGetRankingImpl_GetMonthlyRanking(t *testing.T) {
 		requestURL     string
 		expectedStatus int
 		expectedBody   string
+		hasCacheHeader bool
 	}{
 		{
 			name: "valid request",
 			mockUsecase: UsecaseMock{
 				Domain: "example.com",
 				Start:  getLastDayOfMonth(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
-				End:    getLastDayOfMonth(time.Date(2023, 12, 1, 0, 0, 0, 0, time.UTC)),
+				End:    getLastDayOfMonth(time.Date(2023, 3, 1, 0, 0, 0, 0, time.UTC)),
 				Result: []model.DailyRank{
 					{Rank: 1, Date: getLastDayOfMonth(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))},
+					{Rank: 2, Date: getLastDayOfMonth(time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC))},
+					{Rank: 3, Date: getLastDayOfMonth(time.Date(2023, 3, 1, 0, 0, 0, 0, time.UTC))},
 				},
 			},
-			requestURL:     "/api/v1/rankings/monthly?domain=example.com&start_month=2023-01&end_month=2023-12",
+			requestURL:     "/api/v1/rankings/monthly?domain=example.com&start_month=2023-01&end_month=2023-03",
 			expectedStatus: http.StatusOK,
-			expectedBody:   `{"ranks":[{"rank":1,"date":"2023-01-31"}],"domain":"example.com"}`,
+			expectedBody:   `{"ranks":[{"rank":1,"date":"2023-01-31"},{"rank":2,"date":"2023-02-28"},{"rank":3,"date":"2023-03-31"}],"domain":"example.com"}`,
+			hasCacheHeader: true,
+		},
+		{
+			name: "valid request. But does not have all ranks",
+			mockUsecase: UsecaseMock{
+				Domain: "example.com",
+				Start:  getLastDayOfMonth(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+				End:    getLastDayOfMonth(time.Date(2023, 3, 1, 0, 0, 0, 0, time.UTC)),
+				Result: []model.DailyRank{
+					{Rank: 1, Date: getLastDayOfMonth(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC))},
+					{Rank: 2, Date: getLastDayOfMonth(time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC))},
+				},
+			},
+			requestURL:     "/api/v1/rankings/monthly?domain=example.com&start_month=2023-01&end_month=2023-03",
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"ranks":[{"rank":1,"date":"2023-01-31"},{"rank":2,"date":"2023-02-28"}],"domain":"example.com"}`,
+			hasCacheHeader: false,
 		},
 		{
 			name:           "empty start month request",
@@ -278,6 +327,13 @@ func TestGetRankingImpl_GetMonthlyRanking(t *testing.T) {
 				if body := rec.Body.String(); body != tt.expectedBody+"\n" {
 					t.Errorf("expected body %q, got %q", tt.expectedBody, body)
 				}
+			}
+
+			c := rec.Header().Get("Cache-Control")
+			if tt.hasCacheHeader && (len(c) == 0) {
+				t.Errorf("header has been expected.")
+			} else if !tt.hasCacheHeader && (len(c) > 0) {
+				t.Errorf("header has not been expected. but got %s", c)
 			}
 		})
 	}
