@@ -1,6 +1,6 @@
 module github.com/shigaichi/top-sites-ranking-api
 
-go 1.21.2
+go 1.21.4
 
 require (
 	github.com/go-chi/chi/v5 v5.0.7
