@@ -4,10 +4,12 @@ go 1.21.4
 
 require (
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/cors v1.2.1
 	github.com/google/go-cmp v0.6.0
 	github.com/highlight/highlight/sdk/highlight-go v0.9.12
 	github.com/jackc/pgx/v5 v5.4.3
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/shigaichi/cf-connecting-ip v0.0.0-20231111122854-ef872fbb7a02
 	github.com/shigaichi/tranco v0.0.0-20231007161229-6f7e6f3f4962
 	github.com/sirupsen/logrus v1.9.3
 )
@@ -15,7 +17,6 @@ require (
 require (
 	github.com/99designs/gqlgen v0.17.24 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
-	github.com/go-chi/cors v1.2.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/glog v1.0.0 // indirect

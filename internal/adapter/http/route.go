@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/go-chi/cors"
+	cfconnectingip "github.com/shigaichi/cf-connecting-ip"
 	"github.com/shigaichi/top-sites-ranking-api/internal/adapter/http/handler"
 
 	"github.com/go-chi/chi/v5"
@@ -22,7 +23,7 @@ func NewRouteImpl(h handler.GetRanking) *RouteImpl {
 
 func (i RouteImpl) InitRoute() chi.Router {
 	router := chi.NewRouter()
-	router.Use(middleware.RealIP)
+	router.Use(cfconnectingip.SetRemoteAddr)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.Heartbeat("/status"))

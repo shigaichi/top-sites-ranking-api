@@ -190,6 +190,8 @@ github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFR
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/sergi/go-diff v1.1.0 h1:we8PVUC3FE2uYfodKH/nBHMSetSfHDR6scGdBi+erh0=
 github.com/sergi/go-diff v1.1.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
+github.com/shigaichi/cf-connecting-ip v0.0.0-20231111122854-ef872fbb7a02 h1:vnYwKEUslVfF0cmGTSu68N0plu8mdwc2XHUvPnL9tdk=
+github.com/shigaichi/cf-connecting-ip v0.0.0-20231111122854-ef872fbb7a02/go.mod h1:q9LW2Opo6V0+H/6eRbkwKRC7QKpkkYwAqrKvRmo1KtI=
 github.com/shigaichi/tranco v0.0.0-20231007161229-6f7e6f3f4962 h1:kMSZkG1hxtivV7WANVAXQ0snF2R1FcnKEbtDiUk97BE=
 github.com/shigaichi/tranco v0.0.0-20231007161229-6f7e6f3f4962/go.mod h1:0WP1pLHKoNnzOxg41FeGdLxBvcWy6gYFsbZsziUh4Hk=
 github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ=
