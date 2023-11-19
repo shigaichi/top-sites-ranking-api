@@ -85,8 +85,12 @@ type MockTrancoRankingsRepository struct {
 }
 
 func (m *MockTrancoRankingsRepository) Save(ctx context.Context, ranking model.TrancoRanking) error {
-	expected := model.TrancoRanking{DomainId: 10, ListId: "X5Y7N", Ranking: 1}
-	if !reflect.DeepEqual(expected, ranking) {
+	return errors.New("unexpected invoke")
+}
+
+func (m *MockTrancoRankingsRepository) BulkSave(ctx context.Context, rankings []model.TrancoRanking) error {
+	expected := []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}
+	if !reflect.DeepEqual(expected, rankings) {
 		return errors.New("unexpected parameters in ranking save")
 	}
 
@@ -169,7 +173,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			transaction:   &MockTransaction{},
 			domain:        nil,
 			ranking:       nil,
-			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save list id because it is already exist orr error in writing standard tranco list. error: test"),
+			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save list id because it is already exist or error in writing standard tranco list. error: test"),
 		},
 		{
 			name:          "get domain id error",

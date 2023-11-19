@@ -18,7 +18,7 @@ func StandardWriter(date time.Time) error {
 	csv := infra.NewTrancoCsvImpl()
 	lists := infra.NewTrancoListRepositoryImpl(db)
 	domain := infra.NewTrancoDomainRepositoryImpl(db)
-	rankings := infra.NewTrancoRankingsRepositoryImpl(db)
+	rankings := infra.NewTrancoRankingsRepositoryImpl(10000, db)
 	transaction := infra.NewTransaction(db)
 
 	u := usecase.NewStandardWriteInteractor(api, lists, csv, transaction, domain, rankings)
