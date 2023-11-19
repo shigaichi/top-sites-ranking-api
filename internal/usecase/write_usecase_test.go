@@ -3,10 +3,12 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/url"
-	"reflect"
 	"testing"
 	"time"
+
+	"github.com/google/go-cmp/cmp"
 
 	"github.com/shigaichi/top-sites-ranking-api/internal/domain/model"
 	"github.com/shigaichi/top-sites-ranking-api/internal/domain/repository"
@@ -81,7 +83,8 @@ func (m *MockTrancoDomainsRepository) Save(ctx context.Context, domain string) (
 }
 
 type MockTrancoRankingsRepository struct {
-	Err error
+	Err              error
+	ExpectedRankings []model.TrancoRanking
 }
 
 func (m *MockTrancoRankingsRepository) Save(ctx context.Context, ranking model.TrancoRanking) error {
@@ -89,12 +92,15 @@ func (m *MockTrancoRankingsRepository) Save(ctx context.Context, ranking model.T
 }
 
 func (m *MockTrancoRankingsRepository) BulkSave(ctx context.Context, rankings []model.TrancoRanking) error {
-	expected := []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}
-	if !reflect.DeepEqual(expected, rankings) {
-		return errors.New("unexpected parameters in ranking save")
+	if m.Err != nil {
+		return m.Err
 	}
 
-	return m.Err
+	if diff := cmp.Diff(rankings, m.ExpectedRankings); diff != "" {
+		return fmt.Errorf("response is mimatch:\n%s", diff)
+	}
+
+	return nil
 }
 
 func TestStandardWriteInteractor_Write(t *testing.T) {
@@ -117,7 +123,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
 			domain:        &MockTrancoDomainsRepository{Id: 0, GetIdByDomainErr: nil},
-			ranking:       &MockTrancoRankingsRepository{},
+			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}},
 			expectedError: nil,
 		},
 		{
@@ -173,7 +179,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			transaction:   &MockTransaction{},
 			domain:        nil,
 			ranking:       nil,
-			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save list id because it is already exist or error in writing standard tranco list. error: test"),
+			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save list id in writing standard tranco list error: test"),
 		},
 		{
 			name:          "get domain id error",
@@ -194,7 +200,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
 			domain:        &MockTrancoDomainsRepository{Id: 10, GetIdByDomainErr: nil, SaveErr: errors.New("unexpected invoke")},
-			ranking:       &MockTrancoRankingsRepository{},
+			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}},
 			expectedError: nil,
 		},
 		{

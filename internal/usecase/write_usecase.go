@@ -59,7 +59,7 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 
 		err = i.list.Save(ctx, model.TrancoList{Id: metadata.ListId, CreatedOn: metadata.CreatedOn})
 		if err != nil {
-			return nil, fmt.Errorf("failed to save list id because it is already exist or error in writing standard tranco list. error: %w", err)
+			return nil, fmt.Errorf("failed to save list id in writing standard tranco list error: %w", err)
 		}
 
 		var l []model.TrancoRanking
