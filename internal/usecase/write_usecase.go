@@ -59,7 +59,7 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 
 		err = i.list.Save(ctx, model.TrancoList{Id: metadata.ListId, CreatedOn: metadata.CreatedOn})
 		if err != nil {
-			return nil, fmt.Errorf("failed to save list id in writing standard tranco list error: %w", err)
+			return nil, fmt.Errorf("failed to save tranco list with id %s error: %w", metadata.ListId, err)
 		}
 
 		var l []model.TrancoRanking
@@ -82,7 +82,7 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 
 		err := i.ranking.BulkSave(ctx, l)
 		if err != nil {
-			return nil, fmt.Errorf("failed to save ranking in writing standard tranco list error: %w", err)
+			return nil, fmt.Errorf("failed to bulk save %d rankings in writing standard tranco list error: %w", len(l), err)
 		}
 
 		return nil, nil

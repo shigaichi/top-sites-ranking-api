@@ -97,7 +97,7 @@ func (m *MockTrancoRankingsRepository) BulkSave(ctx context.Context, rankings []
 	}
 
 	if diff := cmp.Diff(rankings, m.ExpectedRankings); diff != "" {
-		return fmt.Errorf("response is mimatch:\n%s", diff)
+		return fmt.Errorf("response is mismatch:\n%s", diff)
 	}
 
 	return nil
@@ -179,7 +179,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			transaction:   &MockTransaction{},
 			domain:        nil,
 			ranking:       nil,
-			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save list id in writing standard tranco list error: test"),
+			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save tranco list with id X5Y7N error: test"),
 		},
 		{
 			name:          "get domain id error",
@@ -199,7 +199,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
-			domain:        &MockTrancoDomainsRepository{Id: 10, GetIdByDomainErr: nil, SaveErr: errors.New("unexpected invoke")},
+			domain:        &MockTrancoDomainsRepository{Id: 10, GetIdByDomainErr: nil},
 			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}},
 			expectedError: nil,
 		},
@@ -223,7 +223,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			transaction:   &MockTransaction{},
 			domain:        &MockTrancoDomainsRepository{Id: 0, GetIdByDomainErr: nil, SaveErr: nil},
 			ranking:       &MockTrancoRankingsRepository{Err: errors.New("test")},
-			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save ranking in writing standard tranco list error: test"),
+			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to bulk save 1 rankings in writing standard tranco list error: test"),
 		},
 	}
 
