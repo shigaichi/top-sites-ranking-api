@@ -18,9 +18,15 @@ import (
 )
 
 func main() {
-	if _, ok := os.LookupEnv("PROFILE"); ok {
-		h := util.SetupLogger()
-		defer h()
+	err := util.SetupLogger()
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("failed to set up logger when start up api server")
+		return
+	}
+
+	s := util.SetupHighlight()
+	if s != nil {
+		defer s()
 	}
 
 	db, err := infra.NewDb()
