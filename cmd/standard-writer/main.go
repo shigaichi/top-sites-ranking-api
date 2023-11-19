@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"os"
 	"time"
 
 	"github.com/shigaichi/top-sites-ranking-api/internal"
@@ -11,9 +10,15 @@ import (
 )
 
 func main() {
-	if _, ok := os.LookupEnv("PROFILE"); ok {
-		h := util.SetupLogger()
-		defer h()
+	err := util.SetupLogger()
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("failed to set up logger when starting standard writer")
+		return
+	}
+
+	s := util.SetupHighlight()
+	if s != nil {
+		defer s()
 	}
 
 	dateStr := flag.String("date", "", "Specify date in the format YYYY-MM-DD. If not specified, uses the current date.")
@@ -31,9 +36,9 @@ func main() {
 		}
 	}
 
-	err := internal.StandardWriter(date)
+	err = internal.StandardWriter(date)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "date": date}).Error("Error in StandardWriter")
+		log.WithFields(log.Fields{"error": err, "date": date}).Error("Failed to execute StandardWriter for the given date")
 		return
 	}
 }
