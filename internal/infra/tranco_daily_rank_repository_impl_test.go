@@ -11,12 +11,12 @@ import (
 	"github.com/shigaichi/top-sites-ranking-api/internal/domain/model"
 )
 
-type MockDB struct {
+type MockDailyRankDB struct {
 	shouldError   bool
 	returnNoRanks bool
 }
 
-func (m MockDB) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+func (m MockDailyRankDB) SelectContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
 	if m.shouldError {
 		return errors.New("mock error")
 	}
@@ -29,15 +29,19 @@ func (m MockDB) SelectContext(ctx context.Context, dest interface{}, query strin
 	return nil
 }
 
-func (m MockDB) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
+func (m MockDailyRankDB) GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error {
 	panic("no implementation")
 }
 
-func (m MockDB) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
-	panic("no implementation")
+func (m MockDailyRankDB) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
+	if m.shouldError {
+		return nil, errors.New("mock error")
+	}
+
+	return nil, nil
 }
 
-func (m MockDB) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
+func (m MockDailyRankDB) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	panic("no implementation")
 }
 
@@ -71,7 +75,7 @@ func TestGetDailyRanksByDateRange(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			repo := TrancoDailyRankRepositoryImpl{db: &MockDB{shouldError: tt.shouldError, returnNoRanks: tt.returnNoRanks}}
+			repo := NewTrancoDailyRankRepositoryImpl(&MockDailyRankDB{shouldError: tt.shouldError, returnNoRanks: tt.returnNoRanks})
 			ranks, err := repo.GetDailyRanksByDateRange(context.Background(), "example.com", time.Now(), time.Now())
 			if tt.wantError {
 				if err == nil {
