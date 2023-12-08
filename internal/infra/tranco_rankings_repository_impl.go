@@ -29,7 +29,7 @@ func (t TrancoRankingsRepositoryImpl) Save(ctx context.Context, ranking model.Tr
 
 	query := `INSERT INTO tranco_rankings (domain_id, list_id, ranking) VALUES ($1, $2, $3)`
 
-	_, err := dao.ExecContext(ctx, query, ranking.DomainId, ranking.ListId, ranking.Ranking)
+	_, err := dao.ExecContext(ctx, query, ranking.DomainID, ranking.ListID, ranking.Ranking)
 	if err != nil {
 		return fmt.Errorf("error saving tranco ranking: %w", err)
 	}
@@ -60,7 +60,7 @@ func (t TrancoRankingsRepositoryImpl) executeBatch(ctx context.Context, rankings
 	valueArgs := make([]any, 0, len(rankings)*3)
 	for i, ranking := range rankings {
 		valueStrings = append(valueStrings, fmt.Sprintf("($%d, $%d, $%d)", i*3+1, i*3+2, i*3+3))
-		valueArgs = append(valueArgs, ranking.DomainId, ranking.ListId, ranking.Ranking)
+		valueArgs = append(valueArgs, ranking.DomainID, ranking.ListID, ranking.Ranking)
 	}
 
 	query := fmt.Sprintf("INSERT INTO tranco_rankings (domain_id, list_id, ranking) VALUES %s", strings.Join(valueStrings, ","))

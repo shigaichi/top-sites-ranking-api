@@ -42,8 +42,9 @@ func main() {
 	r := ri.InitRoute()
 
 	srv := http.Server{
-		Addr:    ":3333",
-		Handler: r,
+		Addr:              ":3333",
+		Handler:           r,
+		ReadHeaderTimeout: 3 * time.Minute,
 	}
 
 	go func() {
@@ -64,14 +65,17 @@ func main() {
 	// Block until we receive our signal.
 	<-c
 
-	var wait time.Duration
+	var wait = 30 * time.Second
 
 	// Create a deadline to wait for.
 	ctx, cancel := context.WithTimeout(context.Background(), wait)
 	defer cancel()
 	// Doesn't block if no connections, but will otherwise wait
 	// until the timeout deadline.
-	srv.Shutdown(ctx)
+	err = srv.Shutdown(ctx)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("Failed to shutdown server")
+	}
 	// Optionally, you could run srv.Shutdown in a goroutine and block on
 	// <-ctx.Done() if your application should wait for other services
 	// to finalize based on context cancellation.

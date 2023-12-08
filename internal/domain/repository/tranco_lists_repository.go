@@ -7,6 +7,6 @@ import (
 )
 
 type TrancoListsRepository interface {
-	ExistsId(ctx context.Context, id string) (bool, error)
+	ExistsID(ctx context.Context, id string) (bool, error)
 	Save(ctx context.Context, list model.TrancoList) error
 }

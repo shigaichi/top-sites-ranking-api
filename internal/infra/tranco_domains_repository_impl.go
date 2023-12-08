@@ -17,7 +17,7 @@ func NewTrancoDomainRepositoryImpl(db *sqlx.DB) *TrancoDomainRepositoryImpl {
 	return &TrancoDomainRepositoryImpl{db: db}
 }
 
-func (t TrancoDomainRepositoryImpl) GetIdByDomain(ctx context.Context, domain string) (int, error) {
+func (t TrancoDomainRepositoryImpl) GetIDByDomain(ctx context.Context, domain string) (int, error) {
 	var dao util.Crudable
 	dao, ok := GetTx(ctx)
 	if !ok {

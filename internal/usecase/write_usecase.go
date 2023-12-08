@@ -16,7 +16,7 @@ type WriteUseCase interface {
 }
 
 type StandardWriteInteractor struct {
-	api         repository.TrancoApiRepository
+	api         repository.TrancoAPIRepository
 	list        repository.TrancoListsRepository
 	csv         repository.TrancoCsvRepository
 	transaction repository.Transaction
@@ -24,23 +24,23 @@ type StandardWriteInteractor struct {
 	ranking     repository.TrancoRankingsRepository
 }
 
-func NewStandardWriteInteractor(api repository.TrancoApiRepository, list repository.TrancoListsRepository, csv repository.TrancoCsvRepository, transaction repository.Transaction, domain repository.TrancoDomainsRepository, ranking repository.TrancoRankingsRepository) *StandardWriteInteractor {
+func NewStandardWriteInteractor(api repository.TrancoAPIRepository, list repository.TrancoListsRepository, csv repository.TrancoCsvRepository, transaction repository.Transaction, domain repository.TrancoDomainsRepository, ranking repository.TrancoRankingsRepository) *StandardWriteInteractor {
 	return &StandardWriteInteractor{api: api, list: list, csv: csv, transaction: transaction, domain: domain, ranking: ranking}
 }
 
 func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) error {
-	metadata, err := i.api.GetIdByDate(date)
+	metadata, err := i.api.GetIDByDate(date)
 	if err != nil {
 		return fmt.Errorf("failed to get tranco list id by date in writing standard tranco list error: %w", err)
 	}
 
-	savedListId, err := i.list.ExistsId(ctx, metadata.ListId)
+	savedListID, err := i.list.ExistsID(ctx, metadata.ListId)
 	if err != nil {
 		return fmt.Errorf("failed to check list id is already exist or not in writing standard tranco list error: %w", err)
 	}
 
-	if savedListId {
-		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id alread exists in writing standard tranco list")
+	if savedListID {
+		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id already exists in writing standard tranco list")
 		return nil
 	} else {
 		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id does not exist and write standard tranco list")
@@ -56,28 +56,27 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 	}
 
 	_, err = i.transaction.DoInTx(ctx, func(ctx context.Context) (interface{}, error) {
-
-		err = i.list.Save(ctx, model.TrancoList{Id: metadata.ListId, CreatedOn: metadata.CreatedOn})
+		err = i.list.Save(ctx, model.TrancoList{ID: metadata.ListId, CreatedOn: metadata.CreatedOn})
 		if err != nil {
 			return nil, fmt.Errorf("failed to save tranco list with id %s error: %w", metadata.ListId, err)
 		}
 
 		var l []model.TrancoRanking
 		for _, ranking := range rankings {
-			var domainId int
-			domainId, err = i.domain.GetIdByDomain(ctx, ranking.Domain)
+			var domainID int
+			domainID, err = i.domain.GetIDByDomain(ctx, ranking.Domain)
 			if err != nil {
 				return nil, fmt.Errorf("failed to save list id in writing standard tranco list error: %w", err)
 			}
 
-			if domainId == 0 {
-				domainId, err = i.domain.Save(ctx, ranking.Domain)
+			if domainID == 0 {
+				domainID, err = i.domain.Save(ctx, ranking.Domain)
 				if err != nil {
 					return nil, fmt.Errorf("failed to save domain in writing standard tranco list error: %w", err)
 				}
 			}
 
-			l = append(l, model.TrancoRanking{DomainId: domainId, ListId: metadata.ListId, Ranking: ranking.Rank})
+			l = append(l, model.TrancoRanking{DomainID: domainID, ListID: metadata.ListId, Ranking: ranking.Rank})
 		}
 
 		err := i.ranking.BulkSave(ctx, l)

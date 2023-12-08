@@ -14,7 +14,7 @@ func StandardWriter(date time.Time) error {
 	if err != nil {
 		return fmt.Errorf("failed to create db connection when start up service. error: %w", err)
 	}
-	api := infra.NewTrancoApiImpl()
+	api := infra.NewTrancoAPIImpl()
 	csv := infra.NewTrancoCsvImpl()
 	lists := infra.NewTrancoListRepositoryImpl(db)
 	domain := infra.NewTrancoDomainRepositoryImpl(db)

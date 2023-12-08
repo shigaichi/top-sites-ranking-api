@@ -15,30 +15,30 @@ import (
 	"github.com/shigaichi/tranco"
 )
 
-type MockTrancoApiRepository struct {
+type MockTrancoAPIRepository struct {
 	Metadata tranco.ListMetadata
 	Err      error
 }
 
-func (m *MockTrancoApiRepository) GetIdByDate(date time.Time) (tranco.ListMetadata, error) {
+func (m *MockTrancoAPIRepository) GetIDByDate(date time.Time) (tranco.ListMetadata, error) {
 	return m.Metadata, m.Err
 }
 
 type MockTrancoListsRepository struct {
 	IsExist     bool
-	ExistsIdErr error
+	ExistsIDErr error
 	SaveErr     error
 }
 
-func (m *MockTrancoListsRepository) ExistsId(ctx context.Context, id string) (bool, error) {
+func (m *MockTrancoListsRepository) ExistsID(ctx context.Context, id string) (bool, error) {
 	if id != "X5Y7N" {
-		return false, errors.New("unexpected parameters in existsId")
+		return false, errors.New("unexpected parameters in existsID")
 	}
-	return m.IsExist, m.ExistsIdErr
+	return m.IsExist, m.ExistsIDErr
 }
 
 func (m *MockTrancoListsRepository) Save(ctx context.Context, list model.TrancoList) error {
-	if list.Id != "X5Y7N" {
+	if list.ID != "X5Y7N" {
 		return errors.New("unexpected parameters in list save")
 	}
 	return m.SaveErr
@@ -69,13 +69,13 @@ func (m *MockTransaction) DoInTx(ctx context.Context, txFunc func(context.Contex
 }
 
 type MockTrancoDomainsRepository struct {
-	Id               int
-	GetIdByDomainErr error
+	ID               int
+	GetIDByDomainErr error
 	SaveErr          error
 }
 
-func (m *MockTrancoDomainsRepository) GetIdByDomain(ctx context.Context, domain string) (int, error) {
-	return m.Id, m.GetIdByDomainErr
+func (m *MockTrancoDomainsRepository) GetIDByDomain(ctx context.Context, domain string) (int, error) {
+	return m.ID, m.GetIDByDomainErr
 }
 
 func (m *MockTrancoDomainsRepository) Save(ctx context.Context, domain string) (int, error) {
@@ -107,7 +107,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 	tests := []struct {
 		name          string
 		inputDate     time.Time
-		api           repository.TrancoApiRepository
+		api           repository.TrancoAPIRepository
 		list          repository.TrancoListsRepository
 		csv           repository.TrancoCsvRepository
 		transaction   repository.Transaction
@@ -118,18 +118,18 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "successful write",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
-			domain:        &MockTrancoDomainsRepository{Id: 0, GetIdByDomainErr: nil},
-			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}},
+			domain:        &MockTrancoDomainsRepository{ID: 0, GetIDByDomainErr: nil},
+			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainID: 10, ListID: "X5Y7N", Ranking: 1}}},
 			expectedError: nil,
 		},
 		{
 			name:          "api error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: errors.New("test")},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: errors.New("test")},
 			list:          nil,
 			csv:           nil,
 			transaction:   nil,
@@ -140,8 +140,8 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "list was already saved",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: true, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: true, ExistsIDErr: nil, SaveErr: nil},
 			csv:           nil,
 			transaction:   nil,
 			domain:        nil,
@@ -151,8 +151,8 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "csv download error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: nil, Err: errors.New("test")},
 			transaction:   nil,
 			domain:        nil,
@@ -162,8 +162,8 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "transaction error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{Err: errors.New("test")},
 			domain:        nil,
@@ -173,8 +173,8 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "list save error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: errors.New("test")},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: errors.New("test")},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
 			domain:        nil,
@@ -184,44 +184,44 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "get domain id error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
-			domain:        &MockTrancoDomainsRepository{Id: 0, GetIdByDomainErr: errors.New("test")},
+			domain:        &MockTrancoDomainsRepository{ID: 0, GetIDByDomainErr: errors.New("test")},
 			ranking:       nil,
 			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save list id in writing standard tranco list error: test"),
 		},
 		{
 			name:          "domain exists",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
-			domain:        &MockTrancoDomainsRepository{Id: 10, GetIdByDomainErr: nil},
-			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainId: 10, ListId: "X5Y7N", Ranking: 1}}},
+			domain:        &MockTrancoDomainsRepository{ID: 10, GetIDByDomainErr: nil},
+			ranking:       &MockTrancoRankingsRepository{ExpectedRankings: []model.TrancoRanking{{DomainID: 10, ListID: "X5Y7N", Ranking: 1}}},
 			expectedError: nil,
 		},
 		{
 			name:          "domain save error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
-			domain:        &MockTrancoDomainsRepository{Id: 0, GetIdByDomainErr: nil, SaveErr: errors.New("test")},
+			domain:        &MockTrancoDomainsRepository{ID: 0, GetIDByDomainErr: nil, SaveErr: errors.New("test")},
 			ranking:       nil,
 			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to save domain in writing standard tranco list error: test"),
 		},
 		{
 			name:          "ranking save error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoApiRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
-			list:          &MockTrancoListsRepository{IsExist: false, ExistsIdErr: nil, SaveErr: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
-			domain:        &MockTrancoDomainsRepository{Id: 0, GetIdByDomainErr: nil, SaveErr: nil},
+			domain:        &MockTrancoDomainsRepository{ID: 0, GetIDByDomainErr: nil, SaveErr: nil},
 			ranking:       &MockTrancoRankingsRepository{Err: errors.New("test")},
 			expectedError: errors.New("failed to save ranking data in writing standard tranco list and saving operation was rollbacked error: failed to bulk save 1 rankings in writing standard tranco list error: test"),
 		},
