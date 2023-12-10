@@ -17,7 +17,7 @@ func NewTrancoListRepositoryImpl(db *sqlx.DB) *TrancoListRepositoryImpl {
 	return &TrancoListRepositoryImpl{db: db}
 }
 
-func (t TrancoListRepositoryImpl) ExistsId(ctx context.Context, id string) (bool, error) {
+func (t TrancoListRepositoryImpl) ExistsID(ctx context.Context, id string) (bool, error) {
 	var dao util.Crudable
 	dao, ok := GetTx(ctx)
 	if !ok {
@@ -28,7 +28,7 @@ func (t TrancoListRepositoryImpl) ExistsId(ctx context.Context, id string) (bool
 	query := `SELECT COUNT(id) FROM tranco_lists WHERE id = $1`
 	err := dao.GetContext(ctx, &count, query, id)
 	if err != nil {
-		return false, fmt.Errorf("failed tp check existence of TrancoList with ID %s: %w", id, err)
+		return false, fmt.Errorf("failed to check existence of TrancoList with ID %s: %w", id, err)
 	}
 	return count > 0, nil
 }
@@ -41,9 +41,9 @@ func (t TrancoListRepositoryImpl) Save(ctx context.Context, list model.TrancoLis
 	}
 
 	query := `INSERT INTO tranco_lists (id, created_on) VALUES ($1, $2)`
-	_, err := dao.ExecContext(ctx, query, list.Id, list.CreatedOn)
+	_, err := dao.ExecContext(ctx, query, list.ID, list.CreatedOn)
 	if err != nil {
-		return fmt.Errorf("failed to save TrancoList with ID %s: %w", list.Id, err)
+		return fmt.Errorf("failed to save TrancoList with ID %s: %w", list.ID, err)
 	}
 	return nil
 }

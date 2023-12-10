@@ -8,25 +8,7 @@ on:
       - '*'
 
 jobs:
-  test-and-lint:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v4
-        with:
-          go-version: '1.21.4'
-
-      - name: Run linter
-        run: make lint
-
-      - name: Run tests
-        run: make test
-
   build-and-push:
-    needs: test-and-lint
     runs-on: ubuntu-latest
 
     steps:

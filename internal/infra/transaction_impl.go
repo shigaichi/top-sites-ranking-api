@@ -3,6 +3,7 @@ package infra
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -27,12 +28,16 @@ func (t *Tx) DoInTx(ctx context.Context, f func(ctx context.Context) (interface{
 
 	v, err := f(ctx)
 	if err != nil {
-		tx.Rollback()
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, fmt.Errorf("sql execution error: %v, rollback error: %v", err, rbErr)
+		}
 		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {
-		tx.Rollback()
+		if rbErr := tx.Rollback(); rbErr != nil {
+			return nil, fmt.Errorf("commit error: %v, rollback error: %v", err, rbErr)
+		}
 		return nil, err
 	}
 	return v, nil

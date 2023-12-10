@@ -1,7 +1,7 @@
 package model
 
 type TrancoRanking struct {
-	DomainId int
-	ListId   string
+	DomainID int
+	ListID   string
 	Ranking  int
 }

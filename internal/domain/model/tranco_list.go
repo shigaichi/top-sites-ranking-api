@@ -3,6 +3,6 @@ package model
 import "time"
 
 type TrancoList struct {
-	Id        string
+	ID        string
 	CreatedOn time.Time
 }

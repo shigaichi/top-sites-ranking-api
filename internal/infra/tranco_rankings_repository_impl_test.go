@@ -46,25 +46,25 @@ func TestTrancoRankingsRepositoryImpl_BulkSave(t *testing.T) {
 		{
 			name: "successful bulk save",
 			args: []model.TrancoRanking{
-				{DomainId: 1, ListId: "list1", Ranking: 100},
-				{DomainId: 2, ListId: "list1", Ranking: 200},
-				{DomainId: 3, ListId: "list1", Ranking: 300},
+				{DomainID: 1, ListID: "list1", Ranking: 100},
+				{DomainID: 2, ListID: "list1", Ranking: 200},
+				{DomainID: 3, ListID: "list1", Ranking: 300},
 			},
 			wantErr: false,
 		},
 		{
 			name: "successful single save",
 			args: []model.TrancoRanking{
-				{DomainId: 1, ListId: "list1", Ranking: 100},
+				{DomainID: 1, ListID: "list1", Ranking: 100},
 			},
 			wantErr: false,
 		},
 		{
 			name: "failed to save",
 			args: []model.TrancoRanking{
-				{DomainId: 1, ListId: "list1", Ranking: 100},
-				{DomainId: 2, ListId: "list1", Ranking: 200},
-				{DomainId: 3, ListId: "list1", Ranking: 300},
+				{DomainID: 1, ListID: "list1", Ranking: 100},
+				{DomainID: 2, ListID: "list1", Ranking: 200},
+				{DomainID: 3, ListID: "list1", Ranking: 300},
 			},
 			wantErr: true,
 		},

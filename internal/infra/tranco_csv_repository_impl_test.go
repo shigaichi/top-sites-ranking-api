@@ -73,7 +73,7 @@ func setup(body string, code int) (string, func()) {
 	mockStatusOK := httptest.NewServer(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(code)
-			w.Write([]byte(body))
+			_, _ = w.Write([]byte(body))
 		},
 	))
 

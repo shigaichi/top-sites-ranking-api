@@ -7,16 +7,16 @@ import (
 	"github.com/shigaichi/tranco"
 )
 
-type TrancoApiImpl struct {
+type TrancoAPIImpl struct {
 	cli tranco.Client
 }
 
-func NewTrancoApiImpl() *TrancoApiImpl {
+func NewTrancoAPIImpl() *TrancoAPIImpl {
 	cli := tranco.New()
-	return &TrancoApiImpl{cli: *cli}
+	return &TrancoAPIImpl{cli: *cli}
 }
 
-func (t TrancoApiImpl) GetIdByDate(date time.Time) (tranco.ListMetadata, error) {
+func (t TrancoAPIImpl) GetIDByDate(date time.Time) (tranco.ListMetadata, error) {
 	lists, err := t.cli.GetListMetadataByDate(context.Background(), date)
 	if err != nil {
 		return tranco.ListMetadata{}, err

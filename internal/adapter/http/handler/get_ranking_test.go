@@ -170,7 +170,10 @@ func TestGetRankingImpl_GetDailyRanking(t *testing.T) {
 
 			if tt.expectedStatus == http.StatusOK {
 				var response map[string]interface{}
-				json.Unmarshal(rr.Body.Bytes(), &response)
+				err := json.Unmarshal(rr.Body.Bytes(), &response)
+				if err != nil {
+					t.Fatalf("json.Unmarshal failed: %v", err)
+				}
 
 				if domain := response["domain"].(string); domain != tt.expectedDomain {
 					t.Errorf("Expected domain to be '%s', got %s", tt.expectedDomain, domain)
