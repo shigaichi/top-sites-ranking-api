@@ -1,11 +1,11 @@
 .DEFAULT_GOAL := build
 
 .PHONY: build
-build:
+build: generate
 	@go build -ldflags="-s -w" -trimpath
 
 .PHONY: test
-test:
+test: generate
 	@go test -v ./...
 
 .PHONY: dry-lint
@@ -17,6 +17,9 @@ lint:
 	@golangci-lint run --fix
 
 .PHONY: coverage
-coverage:
+coverage: generate
 	@go test -cover ./... -coverprofile=cover.out
 	@go tool cover -html=cover.out -o cover.html
+
+generate:
+	@go generate ./...

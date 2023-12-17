@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/shigaichi/top-sites-ranking-api/internal/injector"
+
 	"github.com/shigaichi/top-sites-ranking-api/internal/infra"
-	"github.com/shigaichi/top-sites-ranking-api/internal/usecase"
 )
 
 func StandardWriter(date time.Time) error {
@@ -14,14 +15,9 @@ func StandardWriter(date time.Time) error {
 	if err != nil {
 		return fmt.Errorf("failed to create db connection when start up service. error: %w", err)
 	}
-	api := infra.NewTrancoAPIImpl()
-	csv := infra.NewTrancoCsvImpl()
-	lists := infra.NewTrancoListRepositoryImpl(db)
-	domain := infra.NewTrancoDomainRepositoryImpl(db)
-	rankings := infra.NewTrancoRankingsRepositoryImpl(10000, db)
 	transaction := infra.NewTransaction(db)
+	u := injector.NewStandardWriteInteractor(transaction, db, 10000)
 
-	u := usecase.NewStandardWriteInteractor(api, lists, csv, transaction, domain, rankings)
 	err = u.Write(context.Background(), date)
 	if err != nil {
 		return fmt.Errorf("failed to write csv. error: %w", err)
