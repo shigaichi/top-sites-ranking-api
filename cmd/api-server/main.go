@@ -8,11 +8,11 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/shigaichi/top-sites-ranking-api/internal/adapter/http/handler"
-	"github.com/shigaichi/top-sites-ranking-api/internal/infra"
-	"github.com/shigaichi/top-sites-ranking-api/internal/usecase"
+	"github.com/shigaichi/top-sites-ranking-api/internal/injector"
 
 	route "github.com/shigaichi/top-sites-ranking-api/internal/adapter/http"
+	"github.com/shigaichi/top-sites-ranking-api/internal/adapter/http/handler"
+	"github.com/shigaichi/top-sites-ranking-api/internal/infra"
 	"github.com/shigaichi/top-sites-ranking-api/internal/util"
 	log "github.com/sirupsen/logrus"
 )
@@ -35,8 +35,7 @@ func main() {
 		return
 	}
 
-	repo := infra.NewTrancoDailyRankRepositoryImpl(db)
-	u := usecase.NewRankHistoryInteractor(repo)
+	u := injector.NewRankHistoryInteractor(db)
 	h := handler.NewGetRankingImpl(u)
 	ri := route.NewRouteImpl(h)
 	r := ri.InitRoute()
