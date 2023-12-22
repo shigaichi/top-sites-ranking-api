@@ -44,6 +44,16 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-writer:latest
             ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-writer:${{ steps.check-tags.outputs.tag }}
 
+      - name: Build and push delete image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile-delete
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-delete:latest
+            ghcr.io/${{ github.repository_owner }}/top-sites-ranking-api-delete:${{ steps.check-tags.outputs.tag }}
+
       - name: Build and push server image
         uses: docker/build-push-action@v5
         with:
