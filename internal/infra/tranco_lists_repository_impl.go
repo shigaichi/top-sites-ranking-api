@@ -3,6 +3,7 @@ package infra
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/shigaichi/top-sites-ranking-api/internal/domain/model"
@@ -44,6 +45,38 @@ func (t TrancoListRepositoryImpl) Save(ctx context.Context, list model.TrancoLis
 	_, err := dao.ExecContext(ctx, query, list.ID, list.CreatedOn)
 	if err != nil {
 		return fmt.Errorf("failed to save TrancoList with ID %s: %w", list.ID, err)
+	}
+	return nil
+}
+
+func (t TrancoListRepositoryImpl) FindByCreatedOnLessThan(ctx context.Context, date time.Time) ([]model.TrancoList, error) {
+	var dao util.Crudable
+	dao, ok := GetTx(ctx)
+	if !ok {
+		dao = t.db
+	}
+
+	var lists []model.TrancoList
+	query := "SELECT id, created_on FROM tranco_lists WHERE created_on < $1"
+	err := dao.SelectContext(ctx, &lists, query, date)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find by created on less than %s: %w", date, err)
+	}
+
+	return lists, nil
+}
+
+func (t TrancoListRepositoryImpl) DeleteByID(ctx context.Context, id string) error {
+	var dao util.Crudable
+	dao, ok := GetTx(ctx)
+	if !ok {
+		dao = t.db
+	}
+
+	query := "DELETE FROM tranco_lists WHERE id = $1"
+	_, err := dao.ExecContext(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete by id %s: %w", id, err)
 	}
 	return nil
 }

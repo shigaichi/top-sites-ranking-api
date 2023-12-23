@@ -26,7 +26,9 @@ func (m MockRankingDB) ExecContext(ctx context.Context, query string, args ...an
 		return nil, errors.New("mock error")
 	}
 
-	if query != "INSERT INTO tranco_rankings (domain_id, list_id, ranking) VALUES ($1, $2, $3),($4, $5, $6)" && query != "INSERT INTO tranco_rankings (domain_id, list_id, ranking) VALUES ($1, $2, $3)" {
+	if query != "INSERT INTO tranco_rankings (domain_id, list_id, ranking) VALUES ($1, $2, $3),($4, $5, $6)" &&
+		query != "INSERT INTO tranco_rankings (domain_id, list_id, ranking) VALUES ($1, $2, $3)" &&
+		query != "DELETE FROM tranco_rankings WHERE list_id = $1" {
 		return nil, errors.New("mock error")
 	}
 
@@ -74,6 +76,34 @@ func TestTrancoRankingsRepositoryImpl_BulkSave(t *testing.T) {
 			r := NewTrancoRankingsRepositoryImpl(2, &MockRankingDB{shouldError: tt.wantErr})
 			if err := r.BulkSave(context.Background(), tt.args); (err != nil) != tt.wantErr {
 				t.Errorf("executeBatch() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestTrancoRankingsRepositoryImpl_DeleteByListID(t *testing.T) {
+	tests := []struct {
+		name    string
+		listID  string
+		wantErr bool
+	}{
+		{
+			name:    "successful delete",
+			listID:  "list1",
+			wantErr: false,
+		},
+		{
+			name:    "failed delete due to DB error",
+			listID:  "list1",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := NewTrancoRankingsRepositoryImpl(2, &MockRankingDB{shouldError: tt.wantErr})
+			if err := r.DeleteByListID(context.Background(), tt.listID); (err != nil) != tt.wantErr {
+				t.Errorf("DeleteByListID() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

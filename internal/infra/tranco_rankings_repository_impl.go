@@ -73,3 +73,19 @@ func (t TrancoRankingsRepositoryImpl) executeBatch(ctx context.Context, rankings
 	}
 	return nil
 }
+
+func (t TrancoRankingsRepositoryImpl) DeleteByListID(ctx context.Context, listID string) error {
+	var dao util.Crudable
+	dao, ok := GetTx(ctx)
+	if !ok {
+		dao = t.db
+	}
+
+	query := `DELETE FROM tranco_rankings WHERE list_id = $1`
+
+	_, err := dao.ExecContext(ctx, query, listID)
+	if err != nil {
+		return fmt.Errorf("error delete tranco ranking by list id(%s)  : %w", listID, err)
+	}
+	return nil
+}

@@ -9,4 +9,5 @@ import (
 type TrancoRankingsRepository interface {
 	Save(ctx context.Context, ranking model.TrancoRanking) error
 	BulkSave(ctx context.Context, rankings []model.TrancoRanking) error
+	DeleteByListID(ctx context.Context, listID string) error
 }

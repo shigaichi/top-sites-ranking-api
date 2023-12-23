@@ -38,3 +38,15 @@ func NewStandardWriteInteractor(transaction repository.Transaction, db *sqlx.DB,
 	)
 	return nil
 }
+
+func NewDeleteInteractor(db *sqlx.DB, batchSize int) *usecase.DeleteInteractor {
+	wire.Build(
+		usecase.NewDeleteInteractor,
+		infra.NewTrancoListRepositoryImpl,
+		wire.Bind(new(repository.TrancoListsRepository), new(*infra.TrancoListRepositoryImpl)),
+		infra.NewTrancoRankingsRepositoryImpl,
+		wire.Bind(new(repository.TrancoRankingsRepository), new(*infra.TrancoRankingsRepositoryImpl)),
+		wire.Bind(new(util.Crudable), new(*sqlx.DB)),
+	)
+	return nil
+}

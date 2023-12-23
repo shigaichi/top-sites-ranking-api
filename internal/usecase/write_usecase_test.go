@@ -44,6 +44,14 @@ func (m *MockTrancoListsRepository) Save(ctx context.Context, list model.TrancoL
 	return m.SaveErr
 }
 
+func (m *MockTrancoListsRepository) FindByCreatedOnLessThan(ctx context.Context, date time.Time) ([]model.TrancoList, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (m *MockTrancoListsRepository) DeleteByID(ctx context.Context, id string) error {
+	return errors.New("not implemented")
+}
+
 type MockTrancoCsvRepository struct {
 	SiteRankings []model.SiteRanking
 	Err          error
@@ -101,6 +109,10 @@ func (m *MockTrancoRankingsRepository) BulkSave(ctx context.Context, rankings []
 	}
 
 	return nil
+}
+
+func (m *MockTrancoRankingsRepository) DeleteByListID(ctx context.Context, listID string) error {
+	return errors.New("not implemented")
 }
 
 func TestStandardWriteInteractor_Write(t *testing.T) {

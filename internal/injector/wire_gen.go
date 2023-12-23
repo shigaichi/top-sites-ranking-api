@@ -31,3 +31,10 @@ func NewStandardWriteInteractor(transaction repository.Transaction, db *sqlx.DB,
 	standardWriteInteractor := usecase.NewStandardWriteInteractor(trancoAPIImpl, trancoListRepositoryImpl, trancoCsvImpl, transaction, trancoDomainRepositoryImpl, trancoRankingsRepositoryImpl)
 	return standardWriteInteractor
 }
+
+func NewDeleteInteractor(db *sqlx.DB, batchSize int) *usecase.DeleteInteractor {
+	trancoListRepositoryImpl := infra.NewTrancoListRepositoryImpl(db)
+	trancoRankingsRepositoryImpl := infra.NewTrancoRankingsRepositoryImpl(batchSize, db)
+	deleteInteractor := usecase.NewDeleteInteractor(trancoListRepositoryImpl, trancoRankingsRepositoryImpl)
+	return deleteInteractor
+}
