@@ -34,16 +34,16 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 		return fmt.Errorf("failed to get tranco list id by date in writing standard tranco list error: %w", err)
 	}
 
-	savedListID, err := i.list.ExistsID(ctx, metadata.ListId)
+	savedListID, err := i.list.ExistsID(ctx, metadata.ListID)
 	if err != nil {
 		return fmt.Errorf("failed to check list id is already exist or not in writing standard tranco list error: %w", err)
 	}
 
 	if savedListID {
-		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id already exists in writing standard tranco list")
+		log.WithFields(log.Fields{"list_id": metadata.ListID, "date": date}).Info("list id already exists in writing standard tranco list")
 		return nil
 	} else {
-		log.WithFields(log.Fields{"list_id": metadata.ListId, "date": date}).Info("list id does not exist and write standard tranco list")
+		log.WithFields(log.Fields{"list_id": metadata.ListID, "date": date}).Info("list id does not exist and write standard tranco list")
 	}
 
 	parse, err := url.Parse(metadata.Download)
@@ -56,9 +56,9 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 	}
 
 	_, err = i.transaction.DoInTx(ctx, func(ctx context.Context) (interface{}, error) {
-		err = i.list.Save(ctx, model.TrancoList{ID: metadata.ListId, CreatedOn: metadata.CreatedOn})
+		err = i.list.Save(ctx, model.TrancoList{ID: metadata.ListID, CreatedOn: metadata.CreatedOn})
 		if err != nil {
-			return nil, fmt.Errorf("failed to save tranco list with id %s error: %w", metadata.ListId, err)
+			return nil, fmt.Errorf("failed to save tranco list with id %s error: %w", metadata.ListID, err)
 		}
 
 		var l []model.TrancoRanking
@@ -76,7 +76,7 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 				}
 			}
 
-			l = append(l, model.TrancoRanking{DomainID: domainID, ListID: metadata.ListId, Ranking: ranking.Rank})
+			l = append(l, model.TrancoRanking{DomainID: domainID, ListID: metadata.ListID, Ranking: ranking.Rank})
 		}
 
 		err := i.ranking.BulkSave(ctx, l)

@@ -36,7 +36,7 @@ func main() {
 	db, err := infra.NewDb()
 
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("failed to create db connection when start up api server")
+		log.WithFields(log.Fields{"error": err}).Fatal("failed to create db connection when start up service.")
 	}
 
 	defer func(db *sqlx.DB) {
