@@ -130,7 +130,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "successful write",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
@@ -141,7 +141,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "api error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: errors.New("test")},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: errors.New("test")},
 			list:          nil,
 			csv:           nil,
 			transaction:   nil,
@@ -152,7 +152,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "list was already saved",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: true, ExistsIDErr: nil, SaveErr: nil},
 			csv:           nil,
 			transaction:   nil,
@@ -163,7 +163,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "csv download error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: nil, Err: errors.New("test")},
 			transaction:   nil,
@@ -174,7 +174,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "transaction error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{Err: errors.New("test")},
@@ -185,7 +185,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "list save error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: errors.New("test")},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
@@ -196,7 +196,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "get domain id error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
@@ -207,7 +207,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "domain exists",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
@@ -218,7 +218,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "domain save error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
@@ -229,7 +229,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		{
 			name:          "ranking save error",
 			inputDate:     time.Now(),
-			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListId: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
+			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: nil},
 			list:          &MockTrancoListsRepository{IsExist: false, ExistsIDErr: nil, SaveErr: nil},
 			csv:           &MockTrancoCsvRepository{SiteRankings: []model.SiteRanking{{Domain: "example.com", Rank: 1}}, Err: nil},
 			transaction:   &MockTransaction{},
