@@ -10,7 +10,8 @@ else
     target_date=$(date '+%Y-%m-%d')
 fi
 
-for i in {6..0}; do
+for i in {0..6}; do
     day_to_process=$(date -d "$target_date - $i days" '+%Y-%m-%d')
     ./writer -date "$day_to_process"
+    sleep 1m
 done
