@@ -15,9 +15,13 @@ FROM debian:bookworm-20231009-slim
 
 RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates=20230311 && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+RUN useradd -m nonroot
+
 COPY --from=builder /build/cmd/standard-writer/writer /
 COPY --from=builder /build/standard-writer.sh /
 
 RUN chmod +x /standard-writer.sh
+
+USER nonroot
 
 ENTRYPOINT ["./standard-writer.sh"]

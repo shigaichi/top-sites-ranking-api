@@ -9,7 +9,7 @@ require (
 	github.com/google/wire v0.5.0
 	// increasing the version any further, for some reason the logs stop being output.
 	github.com/highlight/highlight/sdk/highlight-go v0.9.13
-	github.com/jackc/pgx/v5 v5.5.1
+	github.com/jackc/pgx/v5 v5.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/shigaichi/cf-connecting-ip v0.0.0-20231111122854-ef872fbb7a02
 	github.com/shigaichi/tranco v0.0.2
