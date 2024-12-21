@@ -19,11 +19,6 @@ func main() {
 		log.WithFields(log.Fields{"error": err}).Fatal("failed to set up logger when starting delete")
 	}
 
-	s := util.SetupHighlight()
-	if s != nil {
-		defer s()
-	}
-
 	var sinceFlag int
 	flag.IntVar(&sinceFlag, "since", 100, "Number of days back to process")
 

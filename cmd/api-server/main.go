@@ -24,11 +24,6 @@ func main() {
 		return
 	}
 
-	s := util.SetupHighlight()
-	if s != nil {
-		defer s()
-	}
-
 	db, err := infra.NewDb()
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("failed to create db connection when start up api server")
