@@ -16,11 +16,6 @@ func main() {
 		return
 	}
 
-	s := util.SetupHighlight()
-	if s != nil {
-		defer s()
-	}
-
 	dateStr := flag.String("date", "", "Specify date in the format YYYY-MM-DD. If not specified, uses the current date.")
 	flag.Parse()
 
