@@ -140,14 +140,14 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 		},
 		{
 			name:          "api error",
-			inputDate:     time.Now(),
+			inputDate:     time.Date(2025, 4, 1, 0, 0, 0, 0, time.Local),
 			api:           &MockTrancoAPIRepository{Metadata: tranco.ListMetadata{ListID: "X5Y7N", Download: "https://tranco-list.eu/download/X5Y7N/1000000", CreatedOn: time.Date(2023, 10, 17, 0, 0, 0, 0, time.UTC)}, Err: errors.New("test")},
 			list:          nil,
 			csv:           nil,
 			transaction:   nil,
 			domain:        nil,
 			ranking:       nil,
-			expectedError: errors.New("failed to get tranco list id by date in writing standard tranco list error: test"),
+			expectedError: errors.New("failed to get tranco list id for date (2025-04-01) after 3 retries. lastErr: test"),
 		},
 		{
 			name:          "list was already saved",

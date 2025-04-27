@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/shigaichi/tranco"
+
 	"github.com/shigaichi/top-sites-ranking-api/internal/domain/model"
 	"github.com/shigaichi/top-sites-ranking-api/internal/domain/repository"
 	log "github.com/sirupsen/logrus"
@@ -29,9 +31,24 @@ func NewStandardWriteInteractor(api repository.TrancoAPIRepository, list reposit
 }
 
 func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) error {
-	metadata, err := i.api.GetIDByDate(date)
-	if err != nil {
-		return fmt.Errorf("failed to get tranco list id by date in writing standard tranco list error: %w", err)
+	const maxRetries = 3
+	const retryInterval = 100 * time.Millisecond
+
+	// retry get tranco id until success
+	var metadata tranco.ListMetadata
+	var lastErr error
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		var err error
+		metadata, err = i.api.GetIDByDate(date)
+		if err == nil {
+			break
+		}
+		lastErr = err
+		time.Sleep(retryInterval)
+	}
+
+	if lastErr != nil {
+		return fmt.Errorf("failed to get tranco list id for date (%s) after %d retries. lastErr: %w", date.Format("2006-01-02"), maxRetries, lastErr)
 	}
 
 	savedListID, err := i.list.ExistsID(ctx, metadata.ListID)

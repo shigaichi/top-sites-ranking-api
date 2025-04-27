@@ -13,5 +13,7 @@ func SetupLogger() error {
 	}
 	log.SetLevel(level)
 
+	log.SetFormatter(&log.JSONFormatter{})
+
 	return nil
 }
