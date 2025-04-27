@@ -147,7 +147,7 @@ func TestStandardWriteInteractor_Write(t *testing.T) {
 			transaction:   nil,
 			domain:        nil,
 			ranking:       nil,
-			expectedError: errors.New("failed to get tranco list id by date in writing standard tranco list error: test"),
+			expectedError: errors.New("failed to get tranco list id by date after 3 retries: test"),
 		},
 		{
 			name:          "list was already saved",
