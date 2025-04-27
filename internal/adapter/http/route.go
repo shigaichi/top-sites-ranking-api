@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	mymiddleware "github.com/shigaichi/top-sites-ranking-api/internal/adapter/http/middleware"
 )
 
 type Route interface {
@@ -24,7 +25,8 @@ func NewRouteImpl(h handler.GetRanking) *RouteImpl {
 func (i RouteImpl) InitRoute() chi.Router {
 	router := chi.NewRouter()
 	router.Use(cfconnectingip.SetRemoteAddr)
-	router.Use(middleware.Logger)
+	//router.Use(middleware.Logger)
+	router.Use(mymiddleware.RequestLoggerMiddleware([]string{"/status"}))
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.Heartbeat("/status"))
 	router.Use(cors.Handler(cors.Options{
