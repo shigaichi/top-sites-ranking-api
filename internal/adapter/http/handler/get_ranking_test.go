@@ -23,14 +23,14 @@ type UsecaseMock struct {
 }
 
 func (m UsecaseMock) GetDailyRanking(ctx context.Context, domain string, start time.Time, end time.Time) ([]model.DailyRank, error) {
-	if m.Domain == domain && m.Start == start && m.End == end {
+	if m.Domain == domain && m.Start.Equal(start) && m.End.Equal(end) {
 		return m.Result, m.Err
 	}
 	return nil, errors.New("unexpected parameters")
 }
 
 func (m UsecaseMock) GetMonthlyRanking(ctx context.Context, domain string, start time.Time, end time.Time) ([]model.DailyRank, error) {
-	if m.Domain == domain && m.Start == start && m.End == end {
+	if m.Domain == domain && m.Start.Equal(start) && m.End.Equal(end) {
 		return m.Result, m.Err
 	}
 	return nil, errors.New("unexpected parameters")

@@ -23,7 +23,7 @@ func (t TrancoCsvImpl) Get(url url.URL) ([]model.SiteRanking, error) {
 		return nil, fmt.Errorf("failed to download csv from %s. error: %w", url.String(), err)
 	}
 
-	if !(resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices) {
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		return nil, fmt.Errorf("failed to download csv from %s. response status: %d", url.String(), resp.StatusCode)
 	}
 
