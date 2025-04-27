@@ -48,7 +48,7 @@ func (i StandardWriteInteractor) Write(ctx context.Context, date time.Time) erro
 	}
 
 	if lastErr != nil {
-		return fmt.Errorf("failed to get tranco list id by date after %d retries: %w", maxRetries, lastErr)
+		return fmt.Errorf("failed to get tranco list id for date (%s) after %d retries. lastErr: %w", date.Format("2006-01-02"), maxRetries, lastErr)
 	}
 
 	savedListID, err := i.list.ExistsID(ctx, metadata.ListID)

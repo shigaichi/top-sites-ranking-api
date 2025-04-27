@@ -9,7 +9,7 @@ COPY . .
 
 WORKDIR /build/cmd/standard-writer
 
-RUN CGO_ENABLED=0 go build -tags "netgo" -installsuffix netgo -ldflags="-s -w -extldflags \"-static\"" -trimpath -o ./writer
+RUN go build -ldflags '-w -s' -trimpath -o ./writer
 
 FROM debian:bookworm-20250407-slim
 

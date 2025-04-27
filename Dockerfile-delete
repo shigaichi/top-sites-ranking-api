@@ -9,7 +9,7 @@ COPY . .
 
 WORKDIR /build/cmd/delete
 
-RUN CGO_ENABLED=0 go build -tags "netgo" -installsuffix netgo -ldflags="-s -w -extldflags \"-static\"" -trimpath -o ./delete
+RUN go build -ldflags '-w -s' -trimpath -o ./delete
 
 FROM debian:bookworm-20250407-slim
 

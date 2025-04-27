@@ -13,22 +13,18 @@ import (
 func RequestLoggerMiddleware(skipPaths []string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-
-			ww := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
-
-			next.ServeHTTP(ww, r)
-
 			path := r.URL.Path
-
 			for _, skipPath := range skipPaths {
 				if strings.HasPrefix(path, skipPath) {
+					next.ServeHTTP(w, r)
 					return
 				}
 			}
 
+			start := time.Now()
+			ww := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+			next.ServeHTTP(ww, r)
 			duration := time.Since(start)
-
 			log.WithFields(log.Fields{
 				"method":        r.Method,
 				"url":           r.URL.String(),
