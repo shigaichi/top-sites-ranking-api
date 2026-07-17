@@ -1,13 +1,13 @@
 module github.com/shigaichi/top-sites-ranking-api
 
-go 1.26.2
+go 1.26.5
 
 require (
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/go-chi/cors v1.2.1
 	github.com/google/go-cmp v0.6.0
 	github.com/google/wire v0.6.0
-	github.com/jackc/pgx/v5 v5.9.1
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/shigaichi/cf-connecting-ip v0.0.0-20231111122854-ef872fbb7a02
 	github.com/shigaichi/tranco v0.0.2
